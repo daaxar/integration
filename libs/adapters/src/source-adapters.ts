@@ -1,4 +1,5 @@
 import { Client as FtpClient } from 'basic-ftp';
+import { Writable } from 'stream';
 import { MongoClient } from 'mongodb';
 import { request } from 'undici';
 import {
@@ -37,32 +38,41 @@ class FtpSourceAdapter implements SourceAdapter {
 
   async fetchExpeditionStatus(expeditionId: ExpeditionId): Promise<ExpeditionStatus> {
     const client = new FtpClient();
-    await client.access({
-      host: this.cfg.host,
-      port: this.cfg.port,
-      user: this.cfg.username,
-      password: this.cfg.password,
-      secure: false
-    });
+    try {
+      await client.access({
+        host: this.cfg.host,
+        port: this.cfg.port,
+        user: this.cfg.username,
+        password: this.cfg.password,
+        secure: false
+      });
 
-    const files = await client.list(this.cfg.folder);
-    const match = files.find((f) => f.name.includes(this.cfg.filePattern));
-    if (!match) {
-      throw new Error('FTP file not found for expedition');
+      const files = await client.list(this.cfg.folder);
+      const match = files.find((f) => f.name.includes(this.cfg.filePattern));
+      if (!match) {
+        throw new Error('FTP file not found for expedition');
+      }
+
+      const chunks: Buffer[] = [];
+      const writable = new Writable({
+        write(chunk, _encoding, callback) {
+          chunks.push(Buffer.from(chunk));
+          callback();
+        }
+      });
+
+      await client.downloadTo(writable, `${this.cfg.folder}/${match.name}`);
+      const contents = Buffer.concat(chunks).toString('utf-8');
+      const parsed = JSON.parse(contents);
+      const record = parsed.find((item: any) => item.id === expeditionId);
+      if (!record) {
+        throw new Error(`Expedition ${expeditionId} not found in FTP payload`);
+      }
+
+      return { externalState: record.state, internalState: record.state, rawPayload: record };
+    } finally {
+      await client.close();
     }
-
-    const writable: Buffer[] = [];
-    await client.downloadTo(Buffer.concat(writable), `${this.cfg.folder}/${match.name}`);
-    await client.close();
-
-    const contents = writable.toString();
-    const parsed = JSON.parse(contents);
-    const record = parsed.find((item: any) => item.id === expeditionId);
-    if (!record) {
-      throw new Error(`Expedition ${expeditionId} not found in FTP payload`);
-    }
-
-    return { externalState: record.state, internalState: record.state, rawPayload: record };
   }
 }
 
