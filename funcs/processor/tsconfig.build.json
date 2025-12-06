@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "build"
+  },
+  "include": ["src/**/*"],
+  "references": [
+    { "path": "../../libs/domain" },
+    { "path": "../../libs/adapters" },
+    { "path": "../../libs/observability" }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "name": "integration-monorepo",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "libs/*",
+    "funcs/*",
+    "servs/*",
+    "infra/*"
+  ],
+  "scripts": {
+    "build": "npm run build -ws",
+    "lint": "npm run lint -ws",
+    "test": "npm run test -ws"
+  },
+  "devDependencies": {
+    "@types/node": "^22.9.0",
+    "eslint": "^8.57.1",
+    "typescript": "^5.6.3",
+    "vitest": "^1.6.0"
+  },
+  "dependencies": {
+    "pino": "^9.5.0"
+  }
+}

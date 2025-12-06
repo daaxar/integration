@@ -1,0 +1,9 @@
+node_modules
+npm-debug.log
+cdk.out
+dist
+build
+tmp
+.DS_Store
+.idea
+.env*
