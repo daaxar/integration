@@ -6,9 +6,9 @@ Plataforma de integración multi-cliente construida en TypeScript y estructurada
 - `libs/domain`: modelos de dominio, puertos y casos de uso (detección y procesamiento) desacoplados de infraestructura.
 - `libs/adapters`: adaptadores para fuentes Mongo/FTP/API, cliente HTTP hacia el SaaS, repositorios Mongo para configuración y bitácoras, rate limiter y métricas.
 - `libs/observability`: logger estructurado con `pino`.
-- `funcs/orchestrator`: Lambda disparada por EventBridge para detectar expediciones y encolar mensajes con prioridad en SQS.
+- `funcs/orchestrator`: Lambda disparada por EventBridge para detectar expediciones, consultar pendientes en el SaaS y encolar mensajes con prioridad en SQS.
 - `funcs/processor`: Lambda consumidora de SQS que resuelve el adaptador adecuado, aplica el mapping de estados, actualiza el SaaS y persiste bitácoras en Mongo del cliente.
-- `infra/cdk-app`: definición de colas (prioridad y estándar) con DLQ, Lambdas y scheduler.
+- `infra/cdk-app`: definición de colas (prioridad y estándar) con DLQ, Lambdas y scheduler, exponiendo variables de entorno para las URLs de ambas colas y el acceso al SaaS.
 
 ## Principios clave
 - **SOLID / DIP**: la lógica de negocio depende de puertos definidos en `libs/domain`. Los adaptadores proveen implementaciones concretas.

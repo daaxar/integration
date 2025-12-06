@@ -41,8 +41,11 @@ export class IntegrationStack extends Stack {
       handler: 'handler',
       environment: {
         SQS_QUEUE_URL: standardQueue.queueUrl,
+        SQS_HIGH_PRIORITY_QUEUE_URL: highPriorityQueue.queueUrl,
         CENTRAL_MONGO_URI: process.env.CENTRAL_MONGO_URI || '',
-        CENTRAL_MONGO_DB: process.env.CENTRAL_MONGO_DB || ''
+        CENTRAL_MONGO_DB: process.env.CENTRAL_MONGO_DB || '',
+        SAAS_API_BASE_URL: process.env.SAAS_API_BASE_URL || '',
+        SAAS_JWT_TOKEN: process.env.SAAS_JWT_TOKEN || ''
       }
     });
 

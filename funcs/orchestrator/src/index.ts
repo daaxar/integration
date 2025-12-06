@@ -1,23 +1,36 @@
 import { SQS } from 'aws-sdk';
 import { DetectionOrchestrator } from '@integration/domain';
-import { buildConfigRepositoryFromEnv, InMemoryRateLimiter } from '@integration/adapters';
+import {
+  buildConfigRepositoryFromEnv,
+  buildPendingExpeditionRepositoryFromEnv,
+  InMemoryRateLimiter
+} from '@integration/adapters';
 import { logger } from '@integration/observability';
-import { ExpeditionRepository, Expedition } from '@integration/domain';
-
-class SaaSExpeditionRepository implements ExpeditionRepository {
-  async listPendingExpeditions(integration: any): Promise<Expedition[]> {
-    logger.info({ integrationId: integration.id }, 'Fetching pending expeditions from SaaS');
-    return [];
-  }
-}
+import { Expedition } from '@integration/domain';
 
 const sqs = new SQS({ apiVersion: '2012-11-05' });
 
+const standardQueueUrl = process.env.SQS_QUEUE_URL || process.env.SQS_STANDARD_QUEUE_URL;
+const highPriorityQueueUrl = process.env.SQS_HIGH_PRIORITY_QUEUE_URL;
+
+function resolveQueueUrl(expedition: Expedition): string {
+  if (!standardQueueUrl) {
+    throw new Error('SQS_QUEUE_URL or SQS_STANDARD_QUEUE_URL must be set');
+  }
+
+  if (expedition.priority === 'high') {
+    if (highPriorityQueueUrl) {
+      return highPriorityQueueUrl;
+    }
+    logger.warn({ expeditionId: expedition.id }, 'High priority expedition sent to standard queue due to missing high-priority URL');
+  }
+
+  return standardQueueUrl;
+}
+
 const queuePublisher = {
   async enqueue(expedition: Expedition): Promise<void> {
-    const queueUrl = process.env.SQS_QUEUE_URL;
-    if (!queueUrl) throw new Error('SQS_QUEUE_URL not set');
-
+    const queueUrl = resolveQueueUrl(expedition);
     await sqs
       .sendMessage({
         QueueUrl: queueUrl,
@@ -26,6 +39,10 @@ const queuePublisher = {
           priority: {
             DataType: 'String',
             StringValue: expedition.priority
+          },
+          clientId: {
+            DataType: 'String',
+            StringValue: expedition.clientId
           }
         }
       })
@@ -35,7 +52,7 @@ const queuePublisher = {
 
 const orchestrator = new DetectionOrchestrator(
   buildConfigRepositoryFromEnv(),
-  new SaaSExpeditionRepository(),
+  buildPendingExpeditionRepositoryFromEnv(),
   queuePublisher,
   new InMemoryRateLimiter()
 );
