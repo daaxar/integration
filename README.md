@@ -10,6 +10,10 @@ Plataforma de integración multi-cliente construida en TypeScript y estructurada
 - `funcs/processor`: Lambda consumidora de SQS que resuelve el adaptador adecuado, aplica el mapping de estados, actualiza el SaaS y persiste bitácoras en Mongo del cliente.
 - `infra/cdk-app`: definición de colas (prioridad y estándar) con DLQ, Lambdas y scheduler, exponiendo variables de entorno para las URLs de ambas colas y el acceso al SaaS.
 
+## 🛠️ Builds y tests
+- Cada paquete compila su código de producción en la carpeta `build/` utilizando su `tsconfig.build.json` dedicado.
+- Las carpetas de tests viven en `tests/`, al mismo nivel que `src/`, manteniendo separadas las rutas de producción y pruebas.
+
 ## Principios clave
 - **SOLID / DIP**: la lógica de negocio depende de puertos definidos en `libs/domain`. Los adaptadores proveen implementaciones concretas.
 - **Escalabilidad y prioridad**: uso de colas separadas por prioridad y límites por ventana configurable en el dominio y rate limiter.

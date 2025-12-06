@@ -3,10 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "bin": {
-    "cdk": "bin/cdk-app.js"
+    "cdk": "build/bin/cdk-app.js"
   },
   "scripts": {
-    "build": "tsc -p tsconfig.json",
+    "build": "tsc -p tsconfig.build.json",
     "cdk": "cdk",
     "synth": "cdk synth"
   },

@@ -11,8 +11,8 @@
     "resolveJsonModule": true,
     "declaration": true,
     "sourceMap": true,
-    "outDir": "dist",
+    "outDir": "build",
     "rootDir": "src"
   },
-  "exclude": ["node_modules", "dist", "cdk.out"]
+  "exclude": ["node_modules", "dist", "build", "cdk.out"]
 }

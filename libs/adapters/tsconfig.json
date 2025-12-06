@@ -5,6 +5,6 @@
     "types": ["vitest/globals"],
     "rootDir": "."
   },
-  "include": ["src/**/*", "test/**/*"],
+  "include": ["src/**/*", "tests/**/*"],
   "references": [{ "path": "../domain" }]
 }
