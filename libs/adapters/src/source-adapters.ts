@@ -93,8 +93,8 @@ class ApiSourceAdapter implements SourceAdapter {
       throw new Error(`API source responded with status ${response.statusCode}`);
     }
 
-    const body = await response.body.json();
-    const externalState = body.state as string;
+    const body = (await response.body.json()) as { state?: unknown; [key: string]: unknown };
+    const externalState = typeof body.state === 'string' ? body.state : String(body.state ?? '');
     return { externalState, internalState: externalState, rawPayload: body };
   }
 }

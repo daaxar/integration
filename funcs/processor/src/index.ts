@@ -1,4 +1,3 @@
-import { SQSHandler } from 'aws-lambda';
 import {
   DefaultIdempotencyKeyFactory,
   DefaultStateMapper,
@@ -20,7 +19,9 @@ const stateMapper = new DefaultStateMapper();
 const idempotencyFactory = new DefaultIdempotencyKeyFactory();
 const saasClient = new HttpSaasApiClient(process.env.SAAS_API_BASE_URL || '');
 
-export const handler: SQSHandler = async (event) => {
+type SqsEvent = { Records: Array<{ body: string }> };
+
+export const handler = async (event: SqsEvent): Promise<void> => {
   const processor = new ExpeditionProcessor(
     integrationConfigRepo,
     adapterFactory,

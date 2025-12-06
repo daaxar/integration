@@ -3,6 +3,7 @@ npm-debug.log
 cdk.out
 dist
 build
+*.tsbuildinfo
 tmp
 .DS_Store
 .idea
