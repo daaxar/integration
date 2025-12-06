@@ -1,0 +1,26 @@
+{
+  "name": "@integration/infra",
+  "version": "0.1.0",
+  "private": true,
+  "bin": {
+    "cdk": "bin/cdk-app.js"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "cdk": "cdk",
+    "synth": "cdk synth"
+  },
+  "devDependencies": {
+    "aws-cdk": "^2.161.0",
+    "aws-cdk-lib": "^2.161.0",
+    "constructs": "^10.3.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.6.3"
+  },
+  "dependencies": {
+    "@integration/orchestrator-func": "^0.1.0",
+    "@integration/processor-func": "^0.1.0",
+    "aws-cdk-lib": "^2.161.0",
+    "constructs": "^10.3.0"
+  }
+}

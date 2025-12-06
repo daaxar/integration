@@ -1,0 +1,19 @@
+{
+  "name": "@integration/processor-func",
+  "version": "0.1.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "lint": "eslint src --ext .ts",
+    "test": "echo 'no tests yet'"
+  },
+  "dependencies": {
+    "@integration/adapters": "^0.1.0",
+    "@integration/domain": "^0.1.0",
+    "@integration/observability": "^0.1.0",
+    "aws-sdk": "^2.1642.0",
+    "pino": "^9.5.0"
+  }
+}
